@@ -1,5 +1,5 @@
 1. Return false from dropStudent
-2. Return false from enrollStudent
+2. Return false from enrollStudent.
 3. getMajorCtFromDept returns "There are: " + -departmentMapping.get(deptCode) -numberOfCourse
 4. In getMajorCtFromDept returns HttpStatus.FORBIDDEN if the dept doesn't exist
 5. In retrieveDept returns HttpStatus.NOT_FOUND when course exists
