@@ -1,7 +1,7 @@
 package dev.coms4156.project.individualproject;
 
-import java.util.*;
-
+import java.util.Locale;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 
 
 /**
@@ -98,43 +97,6 @@ public class RouteController {
       return handleException(e);
     }
   }
-
-
-  /**
-   * Displays the details of the requested course to the user or displays the proper error
-   * message in response to the request.
-   *
-   * @param courseCode A {@code int} representing the course the user wishes
-   *                   to retrieve.
-   *
-   * @return A {@code ResponseEntity} object containing either the details of the
-   *       course and an HTTP 200 response or, an appropriate message indicating the
-   *       proper response.
-   */
-  @GetMapping(value = "/retrieveCourses", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> retrieveCourses(@RequestParam("courseCode") int courseCode) {
-    try {
-      Map<String, Department> departmentMapping;
-      departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();
-      Department[] departments = departmentMapping.values().toArray(new Department[0]);
-      List<String> res = new ArrayList<>();
-      for (Department dept : departments) {
-        if (dept.getCourseSelection().containsKey(Integer.toString(courseCode))) {
-          res.add(dept.getCourseSelection().get(Integer.toString(courseCode)).toString()
-                          + "; Code: " + courseCode + "; Department: " + dept.getCode());
-        }
-      }
-
-      if (!res.isEmpty()) {
-        return new ResponseEntity<>(Arrays.asList(res.toArray()), HttpStatus.OK);
-      } else {
-        return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
-      }
-    } catch (Exception e) {
-      return handleException(e);
-    }
-  }
-
 
   /**
    * Displays whether the course has at minimum reached its enrollmentCapacity.
@@ -430,45 +392,6 @@ public class RouteController {
   }
 
   /**
-   * Attempts to enroll a student in the requested course.
-   *
-   * @param deptCode   A {@code String} representing the department.
-   * @param courseCode A {@code int} representing the course within the department.
-   *
-   * @return A {@code ResponseEntity} object containing an HTTP 200
-   *       response with an appropriate message or the proper status
-   *       code in tune with what has happened.
-   */
-  @PatchMapping(value = "/enrollStudentInCourse", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> enrollStudent(@RequestParam("deptCode") String deptCode,
-                                       @RequestParam("courseCode") int courseCode) {
-    try {
-      boolean doesCourseExists;
-      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;
-
-      if (doesCourseExists) {
-        Map<String, Department> departmentMapping;
-        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();
-        Map<String, Course> coursesMapping;
-        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();
-
-        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));
-        boolean isStudentEnrolled = requestedCourse.enrollStudent();
-
-        if (isStudentEnrolled) {
-          return new ResponseEntity<>("Student has been enrolled.", HttpStatus.OK);
-        } else {
-          return new ResponseEntity<>("Student has not been enrolled.", HttpStatus.BAD_REQUEST);
-        }
-      } else {
-        return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
-      }
-    } catch (Exception e) {
-      return handleException(e);
-    }
-  }
-
-  /**
    * Attempts to update the enrollment count for the requested course.
    *
    * @param deptCode   A {@code String} representing the department.
@@ -480,7 +403,7 @@ public class RouteController {
    *       code in tune with what has happened.
    */
   @PatchMapping(value = "/updateEnrollmentCount", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> updateEnrollmentCount(@RequestParam("deptCode") String deptCode,
+  public ResponseEntity<?> setEnrollmentCount(@RequestParam("deptCode") String deptCode,
                                               @RequestParam("courseCode") int courseCode,
                                               @RequestParam("count") int count) {
     try {
@@ -517,7 +440,7 @@ public class RouteController {
    *       successful, or an error message if the course is not found
    */
   @PatchMapping(value = "/updateCourseTime", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> updateCourseTime(@RequestParam("deptCode") String deptCode,
+  public ResponseEntity<?> changeCourseTime(@RequestParam("deptCode") String deptCode,
                                             @RequestParam("courseCode") int courseCode,
                                             @RequestParam("time") String time) {
     try {
@@ -555,7 +478,7 @@ public class RouteController {
    *       successful, or an error message if the course is not found
    */
   @PatchMapping(value = "/updateCourseTeacher", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> updateCourseTeacher(@RequestParam("deptCode") String deptCode,
+  public ResponseEntity<?> changeCourseTeacher(@RequestParam("deptCode") String deptCode,
                                                @RequestParam("courseCode") int courseCode,
                                                @RequestParam("teacher") String teacher) {
     try {
@@ -593,7 +516,7 @@ public class RouteController {
    * @return a ResponseEntity with a success message if the operation is
    */
   @PatchMapping(value = "/updateCourseLocation", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> updateCourseLocation(@RequestParam("deptCode") String deptCode,
+  public ResponseEntity<?> changeCourseLocation(@RequestParam("deptCode") String deptCode,
                                                 @RequestParam("courseCode") int courseCode,
                                                 @RequestParam("location") String location) {
     try {
