@@ -24,7 +24,12 @@ public class Department implements Serializable {
                     int numberOfMajors) {
     this.courses = courses;
     this.departmentChair = departmentChair;
-    this.numberOfMajors = numberOfMajors;
+
+    if (numberOfMajors < 0) {
+      throw new IllegalArgumentException();
+    } else {
+      this.numberOfMajors = numberOfMajors;
+    }
     this.deptCode = deptCode;
   }
 
@@ -42,6 +47,17 @@ public class Department implements Serializable {
    *
    * @return The name of the department chair.
    */
+
+  public String getCode() {
+    return this.deptCode;
+  }
+
+  /**
+   * Gets the name of the department chair.
+   *
+   * @return The name of the department chair.
+   */
+
   public String getDepartmentChair() {
     return this.departmentChair;
   }
@@ -74,8 +90,12 @@ public class Department implements Serializable {
   /**
    * Decreases the number of majors in the department by one if it's greater than zero.
    */
-  public void dropPersonFromMajor() {
+  public boolean dropPersonFromMajor() {
+    if (numberOfMajors == 0) {
+      return false;
+    }
     numberOfMajors--;
+    return true;
   }
 
   /**
@@ -115,7 +135,7 @@ public class Department implements Serializable {
       String key = entry.getKey();
       Course value = entry.getValue();
       result.append(deptCode).append(" ").append(key).append(": ").append(value.toString())
-          .append("\n");
+            .append("\n");
     }
     return result.toString();
   }
