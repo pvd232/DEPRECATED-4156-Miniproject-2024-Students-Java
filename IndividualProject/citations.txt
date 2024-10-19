@@ -5,7 +5,7 @@
    Used to help generate unit tests
 
    3. https://softwareengineering.stackexchange.com/questions/368765/is-it-bad-practice-to-enforce-an-execution-order-for-unit-tests
-   Used to learn about unit test execution
+   Used to learn about unit test execution.
 
    4. https://stackoverflow.com/questions/72410785/in-spring-boot-what-should-i-test-in-rest-controller
    Learning more about unit testing
